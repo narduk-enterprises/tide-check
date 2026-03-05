@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import type { SurfSession, Spot } from '~~/server/database/schema'
-
 useSeo({
   title: 'Session Log — Track Your Surf & Fishing Trips',
   description: 'View and manage your surf and fishing session history across all spots. Filter by spot, type, rating, and date. Track your total sessions and ratings.',
@@ -15,13 +13,9 @@ useWebPageSchema({
   description: 'View and manage your surf and fishing session history across all spots.',
 })
 
-const { data: sessions } = await useAsyncData('all-sessions', () =>
-  $fetch<SurfSession[]>('/api/sessions'),
-)
+const { data: sessions } = await useSessionsList()
 
-const { data: spots } = await useAsyncData('all-spots', () =>
-  $fetch<Spot[]>('/api/spots'),
-)
+const { data: spots } = await useSpotsList()
 
 const spotMap = computed(() => {
   const map = new Map<string, string>()
@@ -34,9 +28,9 @@ const spotMap = computed(() => {
 })
 
 // Filters
-const filterType = ref<string>('')
-const filterSpot = ref<string>('')
-const filterRating = ref<number | ''>('')
+const filterType = ref<string | undefined>(undefined)
+const filterSpot = ref<string | undefined>(undefined)
+const filterRating = ref<number | undefined>(undefined)
 
 const filteredSessions = computed(() => {
   if (!sessions.value) return []
@@ -78,7 +72,7 @@ function ratingStars(n: number | null): string {
 }
 
 const spotFilterItems = computed(() => [
-  { label: 'All Spots', value: '' },
+  { label: 'All Spots', value: undefined },
   ...(spots.value || []).map(s => ({ label: s.name, value: s.id })),
 ])
 </script>
@@ -120,11 +114,10 @@ const spotFilterItems = computed(() => [
       </div>
     </div>
 
-    <!-- Filters -->
     <div class="flex flex-wrap gap-3 mb-6">
       <USelect
         v-model="filterType"
-        :items="[{ label: 'All Types', value: '' }, { label: 'Surf', value: 'surf' }, { label: 'Fishing', value: 'fishing' }]"
+        :items="[{ label: 'All Types', value: undefined }, { label: 'Surf', value: 'surf' }, { label: 'Fishing', value: 'fishing' }]"
         placeholder="Type"
         class="w-36"
       />
@@ -136,7 +129,7 @@ const spotFilterItems = computed(() => [
       />
       <USelect
         v-model="filterRating"
-        :items="[{ label: 'Any Rating', value: '' }, { label: '5 Stars', value: 5 }, { label: '4 Stars', value: 4 }, { label: '3 Stars', value: 3 }, { label: '2 Stars', value: 2 }, { label: '1 Star', value: 1 }]"
+        :items="[{ label: 'Any Rating', value: undefined }, { label: '5 Stars', value: 5 }, { label: '4 Stars', value: 4 }, { label: '3 Stars', value: 3 }, { label: '2 Stars', value: 2 }, { label: '1 Star', value: 1 }]"
         placeholder="Rating"
         class="w-36"
       />

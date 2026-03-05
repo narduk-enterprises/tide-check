@@ -59,8 +59,8 @@ async function findStation() {
     interface NoaaStation { id: string; name: string; lat: number; lng: number }
     const data = (await response.json()) as { stations?: NoaaStation[] }
     const stations = (data.stations || []) as NoaaStation[]
-    const lat = parseFloat(form.latitude)
-    const lon = parseFloat(form.longitude)
+    const lat = Number.parseFloat(form.latitude)
+    const lon = Number.parseFloat(form.longitude)
 
     // Find closest station
     let closest: NoaaStation | null = null
@@ -97,17 +97,15 @@ async function submitForm() {
 
   submitting.value = true
   try {
-    const spot = await $fetch('/api/spots', {
-      method: 'POST',
-      body: {
-        name: form.name,
-        latitude: parseFloat(form.latitude),
-        longitude: parseFloat(form.longitude),
-        noaaStationId: form.noaaStationId || undefined,
-        spotType: form.spotType,
-        description: form.description || undefined,
-        timezone: form.timezone,
-      },
+    const { createSpot } = useSpots()
+    const spot = await createSpot({
+      name: form.name,
+      latitude: Number.parseFloat(form.latitude),
+      longitude: Number.parseFloat(form.longitude),
+      noaaStationId: form.noaaStationId || null,
+      spotType: form.spotType as 'surf' | 'fishing' | 'both',
+      description: form.description || null,
+      timezone: 'America/Los_Angeles', // TODO: user preference or detect from coords
     })
     await router.push(`/spots/${(spot as { id: string }).id}`)
   }

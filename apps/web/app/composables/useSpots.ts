@@ -31,22 +31,27 @@ export function useSpots() {
     const created = await $fetch<Spot>('/api/spots', {
       method: 'POST',
       body: spot,
+      headers: { 'X-Requested-With': 'XMLHttpRequest' }
     })
     spots.value = [...spots.value, created]
     return created
   }
 
   async function deleteSpot(id: string) {
-    await $fetch(`/api/spots/${id}`, { method: 'DELETE' })
-    spots.value = spots.value.filter(s => s.id !== id)
+    await $fetch(`/api/spots/${id}`, { method: 'DELETE', headers: { 'X-Requested-With': 'XMLHttpRequest' } })
+    if (spots.value) {
+      spots.value = spots.value.filter(s => s.id !== id)
+    }
   }
 
   return {
-    spots: readonly(spots),
-    loading: readonly(loading),
-    error: readonly(error),
+    spots,
     fetchSpots,
     createSpot,
     deleteSpot,
   }
+}
+
+export function useSpotsList() {
+  return useFetch<Spot[]>('/api/spots', { key: 'all-spots' })
 }

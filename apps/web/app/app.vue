@@ -26,6 +26,10 @@ const mobileMenuOpen = ref(false)
 watch(route, () => {
   mobileMenuOpen.value = false
 })
+
+function isActivePath(itemTo: string) {
+  return route.path.startsWith(itemTo.split('/').slice(0, 2).join('/'))
+}
 </script>
 
 <template>
@@ -33,7 +37,7 @@ watch(route, () => {
     <ULink to="#main-content" class="sr-only focus:not-sr-only focus:fixed focus:top-2 focus:left-2 focus:z-100 focus:px-4 focus:py-2 focus:bg-primary focus:text-white focus:rounded-lg">Skip to content</ULink>
     <div class="app-shell min-h-screen flex flex-col">
       <!-- Header -->
-      <nav class="sticky top-0 z-50 border-b border-default bg-default/80 backdrop-blur-xl">
+      <div role="navigation" class="sticky top-0 z-50 border-b border-default bg-default/80 backdrop-blur-xl">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
           <NuxtLink to="/" class="flex items-center gap-2.5 group">
             <div class="size-9 rounded-xl ocean-gradient flex items-center justify-center text-white shadow-sm transition-transform group-hover:scale-105">
@@ -49,7 +53,7 @@ watch(route, () => {
               :key="item.to"
               :to="item.to"
               class="px-3 py-2 text-sm font-medium rounded-lg transition-colors"
-              :class="route.path.startsWith(item.to.split('/').slice(0, 2).join('/'))
+              :class="isActivePath(item.to)
                 ? 'text-primary bg-primary/10'
                 : 'text-muted hover:text-default hover:bg-elevated'"
             >
@@ -90,7 +94,7 @@ watch(route, () => {
             </NuxtLink>
           </div>
         </Transition>
-      </nav>
+      </div>
 
       <!-- Main -->
       <div id="main-content" class="flex-1">

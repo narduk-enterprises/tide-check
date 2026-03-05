@@ -1,5 +1,8 @@
 import type { ScoreBreakdown } from '~~/server/utils/scoring'
 
+// eslint-disable-next-line vue-official/require-use-prefix-for-composables
+export const fetchSpotConditionsData = (spotId: string) => $fetch<SpotConditions>(`/api/spots/${spotId}/conditions`)
+
 export interface SpotConditions {
   spot: Record<string, unknown>
   score: ScoreBreakdown
@@ -28,10 +31,8 @@ export interface SpotConditions {
  * Composable for fetching spot conditions and Go Score.
  */
 export function useConditions(spotId: MaybeRef<string>) {
-  const key = computed(() => `conditions-${toValue(spotId)}`)
-
   const { data, status, refresh } = useAsyncData(
-    key.value,
+    `conditions-${toValue(spotId)}`,
     () => $fetch<SpotConditions>(`/api/spots/${toValue(spotId)}/conditions`),
     { watch: [() => toValue(spotId)] },
   )
@@ -43,27 +44,25 @@ export function useConditions(spotId: MaybeRef<string>) {
   }
 }
 
-/**
- * Get the color variant for a score rating.
- */
+export function useMoonData() {
+  return useAsyncData('moon', () => $fetch<{ phaseName: string; emoji: string; illumination: number; age: number; majorPeriods: { start: string, end: string }[] }>('/api/moon'))
+}
+
+// eslint-disable-next-line vue-official/require-use-prefix-for-composables
 export function getScoreVariant(total: number): 'success' | 'warning' | 'error' {
   if (total >= 70) return 'success'
   if (total >= 45) return 'warning'
   return 'error'
 }
 
-/**
- * Get the label for a score rating.
- */
+// eslint-disable-next-line vue-official/require-use-prefix-for-composables
 export function getScoreLabel(total: number): string {
   if (total >= 70) return 'Go!'
   if (total >= 45) return 'Maybe'
   return 'No-Go'
 }
 
-/**
- * Get wind direction as a compass label.
- */
+// eslint-disable-next-line vue-official/require-use-prefix-for-composables
 export function windDirection(deg: number): string {
   const dirs = ['N', 'NNE', 'NE', 'ENE', 'E', 'ESE', 'SE', 'SSE', 'S', 'SSW', 'SW', 'WSW', 'W', 'WNW', 'NW', 'NNW']
   const idx = Math.round(deg / 22.5) % 16

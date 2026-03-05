@@ -16,9 +16,7 @@ useWebPageSchema({
   description: 'View all your saved surf and fishing spots with real-time Go/No-Go scores.',
 })
 
-const { data: spots } = await useAsyncData('dashboard-spots', () =>
-  $fetch<Spot[]>('/api/spots'),
-)
+const { data: spots } = await useSpotsList()
 
 // Fetch conditions for all spots in parallel
 const { data: allConditions } = await useAsyncData('dashboard-conditions', async () => {
@@ -26,7 +24,7 @@ const { data: allConditions } = await useAsyncData('dashboard-conditions', async
   const results = await Promise.all(
     spots.value.map(async (spot) => {
       try {
-        const conditions = await $fetch<SpotConditions>(`/api/spots/${spot.id}/conditions`)
+        const conditions = await fetchSpotConditionsData(spot.id)
         return { spotId: spot.id, conditions }
       }
       catch {
@@ -59,9 +57,25 @@ const bestSpot = computed(() => {
   return best
 })
 
-const { data: moonData } = await useAsyncData('moon', () =>
-  $fetch<{ phaseName: string; emoji: string; illumination: number }>('/api/moon'),
-)
+const bestSpotScoreVariant = computed(() => {
+  if (!bestSpot.value) return 'error'
+  return getScoreVariant(bestSpot.value.score)
+})
+
+function getSpotTypeText(spotType: string) {
+  return spotType === 'both' ? 'Surf & Fishing' : spotType === 'surf' ? 'Surf' : 'Fishing'
+}
+
+function getSpotBadgeColor(spotId: string) {
+  const c = conditionsMap.value.get(spotId);
+  return c ? getScoreVariant(c.score.total) : 'neutral';
+}
+
+function getSpotScoreTotal(spotId: string) {
+  return conditionsMap.value.get(spotId)?.score.total ?? 0;
+}
+
+const { data: moonData } = await useMoonData()
 </script>
 
 <template>
@@ -111,18 +125,18 @@ const { data: moonData } = await useAsyncData('moon', () =>
                 {{ bestSpot.spot.name }}
               </NuxtLink>
               <p class="text-muted mt-1">
-                {{ bestSpot.spot.spotType === 'both' ? 'Surf & Fishing' : bestSpot.spot.spotType === 'surf' ? 'Surf' : 'Fishing' }}
+                {{ getSpotTypeText(bestSpot.spot.spotType) }}
               </p>
             </div>
             <div class="text-center">
               <div
                 class="text-4xl font-display font-bold"
-                :class="bestSpot.score >= 70 ? 'text-success' : bestSpot.score >= 45 ? 'text-warning' : 'text-error'"
+                :class="['text-' + bestSpotScoreVariant]"
               >
                 {{ bestSpot.score }}
               </div>
               <UBadge
-                :color="bestSpot.score >= 70 ? 'success' : bestSpot.score >= 45 ? 'warning' : 'error'"
+                :color="bestSpotScoreVariant"
                 variant="subtle"
                 size="sm"
               >
@@ -163,17 +177,17 @@ const { data: moonData } = await useAsyncData('moon', () =>
                 {{ spot.name }}
               </h3>
               <p class="text-xs text-muted mt-0.5">
-                {{ spot.spotType === 'both' ? 'Surf & Fishing' : spot.spotType === 'surf' ? 'Surf' : 'Fishing' }}
+                {{ getSpotTypeText(spot.spotType) }}
               </p>
             </div>
             <template v-if="conditionsMap.get(spot.id)">
               <UBadge
-                :color="getScoreVariant(conditionsMap.get(spot.id)!.score.total)"
+                :color="getSpotBadgeColor(spot.id)"
                 variant="subtle"
                 size="lg"
                 class="font-display font-bold"
               >
-                {{ conditionsMap.get(spot.id)!.score.total }}
+                {{ getSpotScoreTotal(spot.id) }}
               </UBadge>
             </template>
             <USkeleton v-else class="w-10 h-7 rounded-full" />

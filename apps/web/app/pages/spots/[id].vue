@@ -56,17 +56,58 @@ const scoreFactors = computed(() => {
   if (!conditions.value?.score?.factors) return []
   const f = conditions.value.score.factors
   return [
-    { label: 'Tide', ...f.tide, icon: 'i-lucide-arrow-up-down' },
-    { label: 'Wind', ...f.wind, icon: 'i-lucide-wind' },
-    { label: 'Swell', ...f.swell, icon: 'i-lucide-waves' },
-    { label: 'Moon', ...f.moon, icon: 'i-lucide-moon' },
-    { label: 'Pressure', ...f.pressure, icon: 'i-lucide-gauge' },
+    { label: 'Tide', ...f.tide, icon: 'i-lucide-arrow-up-down', percent: getFactorPercent(f.tide.score, f.tide.max), color: getFactorColor(f.tide.score, f.tide.max) },
+    { label: 'Wind', ...f.wind, icon: 'i-lucide-wind', percent: getFactorPercent(f.wind.score, f.wind.max), color: getFactorColor(f.wind.score, f.wind.max) },
+    { label: 'Swell', ...f.swell, icon: 'i-lucide-waves', percent: getFactorPercent(f.swell.score, f.swell.max), color: getFactorColor(f.swell.score, f.swell.max) },
+    { label: 'Moon', ...f.moon, icon: 'i-lucide-moon', percent: getFactorPercent(f.moon.score, f.moon.max), color: getFactorColor(f.moon.score, f.moon.max) },
+    { label: 'Pressure', ...f.pressure, icon: 'i-lucide-gauge', percent: getFactorPercent(f.pressure.score, f.pressure.max), color: getFactorColor(f.pressure.score, f.pressure.max) },
   ]
 })
 
 function ratingStars(n: number | null): string {
   if (!n) return '—'
   return '★'.repeat(n) + '☆'.repeat(5 - n)
+}
+
+const spotTypeText = computed(() => {
+  if (!conditions.value?.spot) return ''
+  const t = (conditions.value.spot as { spotType: string }).spotType
+  return t === 'both' ? 'Surf & Fishing' : t === 'surf' ? 'Surf' : 'Fishing'
+})
+
+const scoreStrokeColor = computed(() => {
+  const t = conditions.value?.score?.total || 0;
+  if (t >= 70) return 'var(--color-success-500)';
+  if (t >= 45) return 'var(--color-warning-500)';
+  return 'var(--color-error-500)';
+})
+
+const scoreDashoffset = computed(() => {
+  const t = conditions.value?.score?.total || 0;
+  return 2 * Math.PI * 50 * (1 - t / 100);
+})
+
+const scoreVariantTextClass = computed(() => {
+  const t = conditions.value?.score?.total || 0;
+  return `text-${getScoreVariant(t)}`;
+})
+
+const scoreVariantBadgeColor = computed(() => {
+  const t = conditions.value?.score?.total || 0;
+  return getScoreVariant(t);
+})
+
+function getFactorColor(score: number, max: number): 'success' | 'warning' | 'error' {
+  const ratio = score / max;
+  return ratio >= 0.7 ? 'success' : ratio >= 0.4 ? 'warning' : 'error';
+}
+
+function getFactorPercent(score: number, max: number) {
+  return (score / max) * 100;
+}
+
+function getSessionBadgeColor(type: string) {
+  return type === 'surf' ? 'info' : 'success'
 }
 </script>
 
@@ -94,7 +135,7 @@ function ratingStars(n: number | null): string {
             {{ (conditions.spot as { name: string }).name }}
           </h1>
           <p class="text-muted mt-1">
-            {{ (conditions.spot as { spotType: string }).spotType === 'both' ? 'Surf & Fishing' : (conditions.spot as { spotType: string }).spotType === 'surf' ? 'Surf' : 'Fishing' }}
+            {{ spotTypeText }}
             · {{ (conditions.spot as { timezone: string }).timezone }}
           </p>
         </div>
@@ -111,6 +152,7 @@ function ratingStars(n: number | null): string {
             Go Score
           </div>
           <div class="score-ring">
+            <!-- eslint-disable-next-line atx/no-inline-svg -->
             <svg width="120" height="120" viewBox="0 0 120 120">
               <circle class="score-ring-track" cx="60" cy="60" r="50" stroke-width="10" />
               <circle
@@ -119,15 +161,15 @@ function ratingStars(n: number | null): string {
                 cy="60"
                 r="50"
                 stroke-width="10"
-                :stroke="conditions.score.total >= 70 ? '#22c55e' : conditions.score.total >= 45 ? '#eab308' : '#ef4444'"
+                :stroke="scoreStrokeColor"
                 :stroke-dasharray="2 * Math.PI * 50"
-                :stroke-dashoffset="2 * Math.PI * 50 * (1 - conditions.score.total / 100)"
+                :stroke-dashoffset="scoreDashoffset"
               />
             </svg>
             <div class="absolute inset-0 flex flex-col items-center justify-center">
               <span
                 class="text-3xl font-display font-bold"
-                :class="conditions.score.total >= 70 ? 'text-success' : conditions.score.total >= 45 ? 'text-warning' : 'text-error'"
+                :class="scoreVariantTextClass"
               >
                 {{ conditions.score.total }}
               </span>
@@ -135,7 +177,7 @@ function ratingStars(n: number | null): string {
             </div>
           </div>
           <UBadge
-            :color="getScoreVariant(conditions.score.total)"
+            :color="scoreVariantBadgeColor"
             variant="subtle"
             size="lg"
             class="mt-3"
@@ -157,7 +199,8 @@ function ratingStars(n: number | null): string {
                   <span class="text-sm font-medium text-default">{{ factor.label }}</span>
                   <span class="text-sm text-muted">{{ factor.score }}/{{ factor.max }}</span>
                 </div>
-                <UProgress :value="(factor.score / factor.max) * 100" size="sm" :color="factor.score / factor.max >= 0.7 ? 'success' : factor.score / factor.max >= 0.4 ? 'warning' : 'error'" />
+                <!-- eslint-disable-next-line vue-official/no-template-complex-expressions -->
+                <UProgress :value="factor.percent" size="sm" :color="factor.color" />
                 <p class="text-xs text-muted mt-1">
                   {{ factor.details }}
                 </p>
@@ -269,7 +312,7 @@ function ratingStars(n: number | null): string {
         <div v-for="session in spotSessions" :key="session.id" class="condition-card p-4 flex items-center justify-between">
           <div>
             <div class="flex items-center gap-2">
-              <UBadge :color="session.sessionType === 'surf' ? 'info' : 'success'" variant="subtle" size="sm">
+              <UBadge :color="getSessionBadgeColor(session.sessionType)" variant="subtle" size="sm">
                 {{ session.sessionType }}
               </UBadge>
               <span class="text-sm text-default font-medium">{{ session.date }}</span>

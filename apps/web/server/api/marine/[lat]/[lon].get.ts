@@ -7,7 +7,7 @@ export default defineEventHandler(async (event) => {
   const lon = getRouterParam(event, 'lon')
   if (!lat || !lon) throw createError({ statusCode: 400, message: 'Latitude and longitude required' })
 
-  const cacheKey = `marine:${parseFloat(lat).toFixed(2)}:${parseFloat(lon).toFixed(2)}`
+  const cacheKey = `marine:${Number.parseFloat(lat).toFixed(2)}:${Number.parseFloat(lon).toFixed(2)}`
   const cached = await getCachedResponse(event, cacheKey)
   if (cached) return JSON.parse(cached)
 

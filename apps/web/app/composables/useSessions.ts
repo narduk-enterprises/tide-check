@@ -5,20 +5,8 @@ import type { SurfSession } from '~~/server/database/schema'
  */
 export function useSessions() {
   const sessions = useState<SurfSession[]>('sessions', () => [])
-  const loading = useState<boolean>('sessions-loading', () => false)
 
-  async function fetchSessions() {
-    loading.value = true
-    try {
-      const { data } = await useAsyncData('sessions', () =>
-        $fetch<SurfSession[]>('/api/sessions'),
-      )
-      if (data.value) sessions.value = data.value
-    }
-    finally {
-      loading.value = false
-    }
-  }
+
 
   async function fetchSpotSessions(spotId: string) {
     const { data } = await useAsyncData(`sessions-${spotId}`, () =>
@@ -39,16 +27,19 @@ export function useSessions() {
     const created = await $fetch<SurfSession>('/api/sessions', {
       method: 'POST',
       body: session,
+      headers: { 'X-Requested-With': 'XMLHttpRequest' }
     })
     sessions.value = [created, ...sessions.value]
     return created
   }
 
   return {
-    sessions: readonly(sessions),
-    loading: readonly(loading),
-    fetchSessions,
+    sessions,
     fetchSpotSessions,
     createSession,
   }
+}
+
+export function useSessionsList() {
+  return useFetch<SurfSession[]>('/api/sessions', { key: 'all-sessions' })
 }

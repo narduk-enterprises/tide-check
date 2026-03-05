@@ -81,6 +81,7 @@ const features = [
 
       <!-- Decorative wave -->
       <div class="absolute bottom-0 left-0 right-0 h-16 overflow-hidden">
+        <!-- eslint-disable-next-line atx/no-inline-svg -->
         <svg viewBox="0 0 1440 60" fill="none" xmlns="http://www.w3.org/2000/svg" class="w-full text-default" preserveAspectRatio="none">
           <path d="M0 60L48 55C96 50 192 40 288 35C384 30 480 30 576 33.3C672 36.7 768 43.3 864 45C960 46.7 1056 43.3 1152 40C1248 36.7 1344 33.3 1392 31.7L1440 30V60H0Z" fill="currentColor" />
         </svg>

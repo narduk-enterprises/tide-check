@@ -4,9 +4,9 @@
  * Re-exports the layer's base tables (users, sessions) so that
  * drizzle-kit can discover them from this workspace.
  */
-export * from '#layer/server/database/schema'
-
 import { sqliteTable, text, integer, real } from 'drizzle-orm/sqlite-core'
+
+export * from '#layer/server/database/schema'
 
 // ─── Spots — User-saved coastal locations ────────────────────
 export const spots = sqliteTable('spots', {

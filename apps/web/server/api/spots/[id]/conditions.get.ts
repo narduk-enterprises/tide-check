@@ -3,6 +3,8 @@ import { spots } from '#server/database/schema'
 import { calculateMoonPhase, getMoonScore } from '#server/utils/moonPhase'
 import { calculateGoScore } from '#server/utils/scoring'
 
+import type { H3Event } from 'h3'
+
 /**
  * GET /api/spots/:id/conditions
  *
@@ -140,8 +142,6 @@ function formatNoaaDate(date: Date): string {
   const d = String(date.getDate()).padStart(2, '0')
   return `${y}${m}${d}`
 }
-
-import type { H3Event } from 'h3'
 
 function deriveTidePhase(tideData: Record<string, unknown> | null, now: Date): { type: 'rising' | 'falling' | 'high' | 'low'; hoursFromTurn: number } {
   if (!tideData || !('predictions' in tideData) || !Array.isArray(tideData.predictions)) {
