@@ -9,7 +9,7 @@ export default defineNuxtConfig({
   extends: ['@narduk-enterprises/narduk-nuxt-template-layer'],
 
   // nitro-cloudflare-dev proxies D1 bindings to the local dev server
-  modules: ['nitro-cloudflare-dev', 'nuxt-auth-utils'],
+  modules: ['nitro-cloudflare-dev'],
 
   nitro: {
     cloudflareDev: {
@@ -26,12 +26,6 @@ export default defineNuxtConfig({
   },
 
   runtimeConfig: {
-    session: {
-      password: '', // Overridden at runtime via NUXT_SESSION_PASSWORD
-      cookie: {
-        secure: false, // Allow cookies over HTTP in local dev
-      },
-    },
     // Server-only (admin API routes)
     googleServiceAccountKey: process.env.GSC_SERVICE_ACCOUNT_JSON || '',
     posthogApiKey: process.env.POSTHOG_PERSONAL_API_KEY || '',
