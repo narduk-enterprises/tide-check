@@ -1,0 +1,178 @@
+@import 'tailwindcss';
+@import '@nuxt/ui';
+
+@theme {
+  /* Typography — ocean-inspired pairing */
+  --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
+  --font-display: 'Outfit', system-ui, sans-serif;
+
+  /* Shadows — softer ocean feel */
+  --shadow-card: 0 1px 3px 0 rgb(0 0 0 / 0.05), 0 1px 2px -1px rgb(0 0 0 / 0.05);
+  --shadow-elevated: 0 4px 12px -2px rgb(0 0 0 / 0.08), 0 2px 4px -2px rgb(0 0 0 / 0.06);
+  --shadow-overlay: 0 12px 28px -6px rgb(0 0 0 / 0.12), 0 4px 8px -4px rgb(0 0 0 / 0.06);
+
+  /* Shape — slightly more rounded for a friendly ocean vibe */
+  --radius-card: 1.25rem;
+  --radius-button: 0.75rem;
+  --radius-badge: 9999px;
+  --radius-input: 0.625rem;
+
+  /* Transitions */
+  --transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-base: 200ms cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-slow: 300ms cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-spring: 500ms cubic-bezier(0.34, 1.56, 0.64, 1);
+
+  /* Ocean-inspired custom properties */
+  --color-ocean-deep: #0c4a6e;
+  --color-ocean-mid: #0e7490;
+  --color-ocean-light: #67e8f9;
+  --color-sand: #fef3c7;
+  --color-coral: #fb7185;
+  --color-seafoam: #a7f3d0;
+}
+
+body {
+  @apply antialiased text-default bg-default scheme-light dark:scheme-dark;
+  font-family: var(--font-sans);
+}
+
+h1,
+h2,
+h3,
+h4,
+.font-display {
+  font-family: var(--font-display);
+}
+
+/* ─── Score Badge ─── */
+.score-go {
+  @apply bg-success/10 text-success;
+}
+.score-maybe {
+  @apply bg-warning/10 text-warning;
+}
+.score-no-go {
+  @apply bg-error/10 text-error;
+}
+
+/* ─── Go Score Ring ─── */
+.score-ring {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.score-ring svg {
+  transform: rotate(-90deg);
+}
+
+.score-ring-track {
+  stroke: var(--ui-border);
+  fill: none;
+}
+
+.score-ring-progress {
+  fill: none;
+  stroke-linecap: round;
+  transition: stroke-dashoffset 1s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* ─── Ocean gradient backgrounds ─── */
+.ocean-gradient {
+  background: linear-gradient(
+    135deg,
+    var(--color-ocean-deep) 0%,
+    var(--color-ocean-mid) 50%,
+    var(--color-ocean-light) 100%
+  );
+}
+
+.ocean-gradient-subtle {
+  background: linear-gradient(180deg, rgb(14 116 144 / 0.03) 0%, rgb(14 116 144 / 0.08) 100%);
+}
+
+.dark .ocean-gradient-subtle {
+  background: linear-gradient(180deg, rgb(14 116 144 / 0.05) 0%, rgb(14 116 144 / 0.12) 100%);
+}
+
+/* ─── Condition cards ─── */
+.condition-card {
+  @apply bg-default border border-default;
+  border-radius: var(--radius-card);
+  box-shadow: var(--shadow-card);
+  transition: all var(--transition-base);
+}
+
+.condition-card:hover {
+  box-shadow: var(--shadow-elevated);
+  transform: translateY(-1px);
+}
+
+/* ─── Wave animation ─── */
+@keyframes wave-float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-6px);
+  }
+}
+
+.animate-wave {
+  animation: wave-float 3s ease-in-out infinite;
+}
+
+/* ─── Fade in stagger ─── */
+@keyframes fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-up {
+  animation: fade-up 0.6s ease-out forwards;
+  opacity: 0;
+}
+
+.stagger-1 {
+  animation-delay: 0.1s;
+}
+.stagger-2 {
+  animation-delay: 0.2s;
+}
+.stagger-3 {
+  animation-delay: 0.3s;
+}
+.stagger-4 {
+  animation-delay: 0.4s;
+}
+
+/* ─── Wind direction arrow ─── */
+.wind-arrow {
+  display: inline-flex;
+  transition: transform var(--transition-base);
+}
+
+/* ─── Page transitions ─── */
+.page-enter-active,
+.page-leave-active {
+  transition: all var(--transition-slow);
+}
+
+.page-enter-from {
+  opacity: 0;
+  transform: translateY(8px);
+}
+
+.page-leave-to {
+  opacity: 0;
+  transform: translateY(-8px);
+}

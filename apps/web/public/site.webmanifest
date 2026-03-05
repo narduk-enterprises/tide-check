@@ -1,0 +1,19 @@
+{
+  "name": "TideCheck",
+  "short_name": "TideCheck",
+  "icons": [
+    {
+      "src": "/favicon-32x32.png",
+      "sizes": "32x32",
+      "type": "image/png"
+    },
+    {
+      "src": "/apple-touch-icon.png",
+      "sizes": "180x180",
+      "type": "image/png"
+    }
+  ],
+  "theme_color": "#06b6d4",
+  "background_color": "#ffffff",
+  "display": "standalone"
+}
