@@ -13,8 +13,6 @@ useWebPageSchema({
   description: 'Add a surf break, fishing pier, or coastal spot to TideCheck.',
 })
 
-definePageMeta({ middleware: ['auth'] })
-
 const router = useRouter()
 
 function onMapClick(coords: { lat: number; lng: number }) {
@@ -141,9 +139,9 @@ async function submitForm() {
 
 <template>
   <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-    <NuxtLink to="/dashboard" class="text-sm text-muted hover:text-default transition-colors flex items-center gap-1 mb-6">
+    <NuxtLink to="/" class="text-sm text-muted hover:text-default transition-colors flex items-center gap-1 mb-6">
       <UIcon name="i-lucide-arrow-left" class="size-3.5" />
-      Dashboard
+      Map
     </NuxtLink>
 
     <h1 class="text-3xl font-display font-bold text-default mb-2">
@@ -233,7 +231,7 @@ async function submitForm() {
       </UFormField>
 
       <div class="form-actions">
-        <UButton variant="outline" color="neutral" to="/dashboard">
+        <UButton variant="outline" color="neutral" to="/">
           Cancel
         </UButton>
         <UButton :loading="submitting" icon="i-lucide-plus" @click="submitForm">

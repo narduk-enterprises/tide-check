@@ -13,8 +13,6 @@ useWebPageSchema({
   description: 'View and manage your surf and fishing session history across all spots.',
 })
 
-definePageMeta({ middleware: ['auth'] })
-
 const { data: sessions } = await useSessionsList()
 
 const { data: spots } = await useSpotsList()
@@ -146,8 +144,8 @@ const spotFilterItems = computed(() => [
       <p class="text-muted mb-6">
         {{ sessions?.length ? 'Try adjusting your filters.' : 'Log your first session from a spot detail page!' }}
       </p>
-      <UButton v-if="!sessions?.length" to="/dashboard" icon="i-lucide-layout-dashboard">
-        Go to Dashboard
+      <UButton v-if="!sessions?.length" to="/" icon="i-lucide-map">
+        Go to Map
       </UButton>
     </div>
 

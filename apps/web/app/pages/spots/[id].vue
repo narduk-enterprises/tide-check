@@ -18,8 +18,6 @@ useWebPageSchema({
   description: 'Real-time tide predictions, swell forecast, wind conditions, and Go/No-Go score.',
 })
 
-definePageMeta({ middleware: ['auth'] })
-
 const { fetchSpotSessions, createSession } = useSessions()
 const { data: spotSessions } = await useAsyncData(`spot-sessions-${spotId}`, () =>
   fetchSpotSessions(spotId),
@@ -129,9 +127,9 @@ function getSessionBadgeColor(type: string) {
       <!-- Header -->
       <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-8">
         <div>
-          <NuxtLink to="/dashboard" class="text-sm text-muted hover:text-default transition-colors flex items-center gap-1 mb-2">
+          <NuxtLink to="/" class="text-sm text-muted hover:text-default transition-colors flex items-center gap-1 mb-2">
             <UIcon name="i-lucide-arrow-left" class="size-3.5" />
-            Dashboard
+            Map
           </NuxtLink>
           <h1 class="text-3xl font-display font-bold text-default">
             {{ (conditions.spot as { name: string }).name }}

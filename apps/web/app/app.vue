@@ -15,8 +15,8 @@ function cycleColorMode() {
 }
 
 const navItems = [
-  { label: 'Dashboard', to: '/dashboard', icon: 'i-lucide-layout-dashboard' },
-  { label: 'Spots', to: '/spots/new', icon: 'i-lucide-map-pin' },
+  { label: 'Map', to: '/', icon: 'i-lucide-map' },
+  { label: 'Add Spot', to: '/spots/new', icon: 'i-lucide-map-pin' },
   { label: 'Sessions', to: '/sessions', icon: 'i-lucide-notebook-pen' },
   { label: 'About', to: '/about', icon: 'i-lucide-info' },
 ]
@@ -28,10 +28,9 @@ watch(route, () => {
 })
 
 function isActivePath(itemTo: string) {
+  if (itemTo === '/') return route.path === '/'
   return route.path.startsWith(itemTo.split('/').slice(0, 2).join('/'))
 }
-
-const { loggedIn, user, clear } = useUserSession()
 </script>
 
 <template>
@@ -64,14 +63,6 @@ const { loggedIn, user, clear } = useUserSession()
           </div>
 
           <div class="flex items-center gap-2">
-            <template v-if="loggedIn">
-              <span class="text-sm font-medium text-muted hidden lg:block">{{ user?.email }}</span>
-              <UButton variant="ghost" color="neutral" size="sm" @click="clear">Logout</UButton>
-            </template>
-            <template v-else>
-              <UButton variant="ghost" color="neutral" to="/login" size="sm">Sign In</UButton>
-              <UButton variant="solid" color="primary" to="/register" size="sm" class="hidden sm:inline-flex">Sign Up</UButton>
-            </template>
             <UButton
               :icon="colorModeIcon"
               variant="ghost"
