@@ -16,6 +16,8 @@ useWebPageSchema({
   description: 'View all your saved surf and fishing spots with real-time Go/No-Go scores.',
 })
 
+definePageMeta({ middleware: ['auth'] })
+
 const { data: spots } = await useSpotsList()
 
 // Fetch conditions for all spots in parallel
@@ -76,6 +78,32 @@ function getSpotScoreTotal(spotId: string) {
 }
 
 const { data: moonData } = await useMoonData()
+
+const router = useRouter()
+const selectedMapSpotId = ref<string | null>(null)
+
+watch(selectedMapSpotId, (id) => {
+  if (id) {
+    router.push(`/spots/${id}`)
+  }
+})
+
+function createMapPin(spot: { spotType: string }, isSelected: boolean) {
+  const el = document.createElement('div')
+  el.className = `size-8 rounded-full border-2 border-white shadow-sm flex items-center justify-center text-white text-sm transition-transform ${isSelected ? 'bg-primary scale-125' : 'bg-primary/90'}`
+  el.innerHTML = spot.spotType === 'surf' ? '🏄' : spot.spotType === 'fishing' ? '🎣' : '🌊'
+  return { element: el }
+}
+
+const mapItems = computed(() => {
+  return spots.value?.map(s => ({
+    id: s.id,
+    name: s.name,
+    lat: s.latitude,
+    lng: s.longitude,
+    spotType: s.spotType,
+  })) || []
+})
 </script>
 
 <template>
@@ -164,6 +192,17 @@ const { data: moonData } = await useMoonData()
       <h2 class="text-xl font-display font-semibold text-default mb-4">
         Your Spots
       </h2>
+      
+      <div v-if="mapItems.length > 0" class="mb-6 rounded-xl overflow-hidden border border-default shadow-card bg-muted/30 relative h-[400px]">
+        <AppMapKit
+          v-model:selected-id="selectedMapSpotId"
+          :items="mapItems"
+          :zoom-span="{ lat: 5, lng: 5 }"
+          :create-pin-element="createMapPin"
+          class="w-full h-full"
+        />
+      </div>
+
       <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
         <NuxtLink
           v-for="spot in spots"

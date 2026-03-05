@@ -13,6 +13,8 @@ useWebPageSchema({
   description: 'View and manage your surf and fishing session history across all spots.',
 })
 
+definePageMeta({ middleware: ['auth'] })
+
 const { data: sessions } = await useSessionsList()
 
 const { data: spots } = await useSpotsList()

@@ -13,7 +13,28 @@ useWebPageSchema({
   description: 'Add a surf break, fishing pier, or coastal spot to TideCheck.',
 })
 
+definePageMeta({ middleware: ['auth'] })
+
 const router = useRouter()
+
+function onMapClick(coords: { lat: number; lng: number }) {
+  form.latitude = String(coords.lat)
+  form.longitude = String(coords.lng)
+}
+
+function createMapPin() {
+  const el = document.createElement('div')
+  el.className = `size-6 rounded-full border-2 border-white shadow-sm flex items-center justify-center bg-primary text-white text-xs`
+  el.innerHTML = '📍'
+  return { element: el }
+}
+
+const mapItems = computed(() => {
+  if (form.latitude && form.longitude) {
+    return [{ id: 'new-spot', lat: Number(form.latitude), lng: Number(form.longitude) }]
+  }
+  return []
+})
 
 const form = reactive({
   name: '',
@@ -168,6 +189,17 @@ async function submitForm() {
         <UFormField label="Longitude" required>
           <UInput v-model="form.longitude" type="number" step="any" placeholder="-94.7835" class="w-full" />
         </UFormField>
+      </div>
+
+      <div class="my-4 rounded-xl overflow-hidden border border-default shadow-card bg-muted/30 relative h-[300px]">
+        <AppMapKit
+          :items="mapItems"
+          :fallback-center="{ lat: 39.8283, lng: -98.5795 }"
+          :zoom-span="{ lat: 20, lng: 20 }"
+          :create-pin-element="createMapPin"
+          class="w-full h-full"
+          @map-click="onMapClick"
+        />
       </div>
 
       <div class="form-row">

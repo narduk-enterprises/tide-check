@@ -30,6 +30,8 @@ watch(route, () => {
 function isActivePath(itemTo: string) {
   return route.path.startsWith(itemTo.split('/').slice(0, 2).join('/'))
 }
+
+const { loggedIn, user, clear } = useUserSession()
 </script>
 
 <template>
@@ -62,6 +64,14 @@ function isActivePath(itemTo: string) {
           </div>
 
           <div class="flex items-center gap-2">
+            <template v-if="loggedIn">
+              <span class="text-sm font-medium text-muted hidden lg:block">{{ user?.email }}</span>
+              <UButton variant="ghost" color="neutral" size="sm" @click="clear">Logout</UButton>
+            </template>
+            <template v-else>
+              <UButton variant="ghost" color="neutral" to="/login" size="sm">Sign In</UButton>
+              <UButton variant="solid" color="primary" to="/register" size="sm" class="hidden sm:inline-flex">Sign Up</UButton>
+            </template>
             <UButton
               :icon="colorModeIcon"
               variant="ghost"

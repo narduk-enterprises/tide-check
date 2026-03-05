@@ -18,6 +18,8 @@ useWebPageSchema({
   description: 'Real-time tide predictions, swell forecast, wind conditions, and Go/No-Go score.',
 })
 
+definePageMeta({ middleware: ['auth'] })
+
 const { fetchSpotSessions, createSession } = useSessions()
 const { data: spotSessions } = await useAsyncData(`spot-sessions-${spotId}`, () =>
   fetchSpotSessions(spotId),
