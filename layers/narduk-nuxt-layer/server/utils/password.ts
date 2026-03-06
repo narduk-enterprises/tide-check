@@ -28,13 +28,9 @@ function fromHex(hex: string): Uint8Array {
 export async function hashUserPassword(password: string): Promise<string> {
   const salt = crypto.getRandomValues(new Uint8Array(SALT_LENGTH))
   const enc = new TextEncoder()
-  const key = await crypto.subtle.importKey(
-    'raw',
-    enc.encode(password),
-    'PBKDF2',
-    false,
-    ['deriveBits'],
-  )
+  const key = await crypto.subtle.importKey('raw', enc.encode(password), 'PBKDF2', false, [
+    'deriveBits',
+  ])
   const bits = await crypto.subtle.deriveBits(
     {
       name: 'PBKDF2',
@@ -57,13 +53,9 @@ export async function verifyUserPassword(password: string, stored: string): Prom
   if (!saltHex || !hashHex) return false
   const salt = fromHex(saltHex)
   const enc = new TextEncoder()
-  const key = await crypto.subtle.importKey(
-    'raw',
-    enc.encode(password),
-    'PBKDF2',
-    false,
-    ['deriveBits'],
-  )
+  const key = await crypto.subtle.importKey('raw', enc.encode(password), 'PBKDF2', false, [
+    'deriveBits',
+  ])
   const bits = await crypto.subtle.deriveBits(
     {
       name: 'PBKDF2',
