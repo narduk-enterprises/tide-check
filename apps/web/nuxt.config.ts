@@ -27,7 +27,9 @@ export default defineNuxtConfig({
 
   runtimeConfig: {
     session: {
-      password: '', // Overridden at runtime via NUXT_SESSION_PASSWORD
+      password:
+        process.env.NUXT_SESSION_PASSWORD ||
+        (import.meta.dev ? 'tide-check-dev-session-secret-min-32-chars' : ''),
       cookie: {
         secure: false, // Allow cookies over HTTP in local dev
       },
