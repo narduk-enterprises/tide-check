@@ -2,7 +2,7 @@
   "name": "web",
   "type": "module",
   "private": true,
-  "version": "1.16.4",
+  "version": "1.16.5",
   "scripts": {
     "build": "nuxt build",
     "dev": "doppler run -- nuxt dev",
