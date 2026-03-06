@@ -10,7 +10,7 @@ const colorModeIcon = computed(() => {
 
 function cycleColorMode() {
   const modes = ['system', 'light', 'dark'] as const
-  const idx = modes.indexOf(colorMode.preference as typeof modes[number])
+  const idx = modes.indexOf(colorMode.preference as (typeof modes)[number])
   colorMode.preference = modes[(idx + 1) % modes.length]!
 }
 
@@ -36,13 +36,22 @@ const { loggedIn, user, clear } = useUserSession()
 
 <template>
   <UApp>
-    <ULink to="#main-content" class="sr-only focus:not-sr-only focus:fixed focus:top-2 focus:left-2 focus:z-100 focus:px-4 focus:py-2 focus:bg-primary focus:text-white focus:rounded-lg">Skip to content</ULink>
+    <ULink
+      to="#main-content"
+      class="sr-only focus:not-sr-only focus:fixed focus:top-2 focus:left-2 focus:z-100 focus:px-4 focus:py-2 focus:bg-primary focus:text-white focus:rounded-lg"
+      >Skip to content</ULink
+    >
     <div class="app-shell min-h-screen flex flex-col">
       <!-- Header -->
-      <div role="navigation" class="sticky top-0 z-50 border-b border-default bg-default/80 backdrop-blur-xl">
+      <div
+        role="navigation"
+        class="sticky top-0 z-50 border-b border-default bg-default/80 backdrop-blur-xl"
+      >
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
           <NuxtLink to="/" class="flex items-center gap-2.5 group">
-            <div class="size-9 rounded-xl ocean-gradient flex items-center justify-center text-white shadow-sm transition-transform group-hover:scale-105">
+            <div
+              class="size-9 rounded-xl ocean-gradient flex items-center justify-center text-white shadow-sm transition-transform group-hover:scale-105"
+            >
               <UIcon name="i-lucide-waves" class="size-5" />
             </div>
             <span class="font-display font-bold text-lg tracking-tight">TideCheck</span>
@@ -55,9 +64,11 @@ const { loggedIn, user, clear } = useUserSession()
               :key="item.to"
               :to="item.to"
               class="px-3 py-2 text-sm font-medium rounded-lg transition-colors"
-              :class="isActivePath(item.to)
-                ? 'text-primary bg-primary/10'
-                : 'text-muted hover:text-default hover:bg-elevated'"
+              :class="
+                isActivePath(item.to)
+                  ? 'text-primary bg-primary/10'
+                  : 'text-muted hover:text-default hover:bg-elevated'
+              "
             >
               {{ item.label }}
             </NuxtLink>
@@ -65,12 +76,21 @@ const { loggedIn, user, clear } = useUserSession()
 
           <div class="flex items-center gap-2">
             <template v-if="loggedIn">
-              <span class="text-sm font-medium text-muted hidden lg:block">{{ user?.email }}</span>
+              <span class="text-sm font-medium text-muted hidden lg:block">{{
+                (user as any)?.email
+              }}</span>
               <UButton variant="ghost" color="neutral" size="sm" @click="clear">Logout</UButton>
             </template>
             <template v-else>
               <UButton variant="ghost" color="neutral" to="/login" size="sm">Sign In</UButton>
-              <UButton variant="solid" color="primary" to="/register" size="sm" class="hidden sm:inline-flex">Sign Up</UButton>
+              <UButton
+                variant="solid"
+                color="primary"
+                to="/register"
+                size="sm"
+                class="hidden sm:inline-flex"
+                >Sign Up</UButton
+              >
             </template>
             <UButton
               :icon="colorModeIcon"
@@ -81,7 +101,13 @@ const { loggedIn, user, clear } = useUserSession()
             />
 
             <!-- Mobile hamburger -->
-            <UButton color="neutral" variant="ghost" class="md:hidden" aria-label="Toggle navigation menu" @click="mobileMenuOpen = !mobileMenuOpen">
+            <UButton
+              color="neutral"
+              variant="ghost"
+              class="md:hidden"
+              aria-label="Toggle navigation menu"
+              @click="mobileMenuOpen = !mobileMenuOpen"
+            >
               <UIcon :name="mobileMenuOpen ? 'i-lucide-x' : 'i-lucide-menu'" class="size-5" />
             </UButton>
           </div>
@@ -95,9 +121,11 @@ const { loggedIn, user, clear } = useUserSession()
               :key="item.to"
               :to="item.to"
               class="flex items-center gap-3 px-3 py-2.5 text-sm font-medium rounded-lg transition-colors"
-              :class="route.path.startsWith(item.to)
-                ? 'text-primary bg-primary/10'
-                : 'text-muted hover:text-default hover:bg-elevated'"
+              :class="
+                route.path.startsWith(item.to)
+                  ? 'text-primary bg-primary/10'
+                  : 'text-muted hover:text-default hover:bg-elevated'
+              "
             >
               <UIcon :name="item.icon" class="size-4" />
               {{ item.label }}
@@ -118,13 +146,16 @@ const { loggedIn, user, clear } = useUserSession()
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div class="flex flex-col sm:flex-row items-center justify-between gap-4">
             <div class="flex items-center gap-2">
-              <div class="size-6 rounded-lg ocean-gradient flex items-center justify-center text-white">
+              <div
+                class="size-6 rounded-lg ocean-gradient flex items-center justify-center text-white"
+              >
                 <UIcon name="i-lucide-waves" class="size-3.5" />
               </div>
               <span class="font-display font-semibold text-sm">TideCheck</span>
             </div>
             <p class="text-sm text-muted text-center">
-              Tide data: NOAA CO-OPS &middot; Marine forecasts: Open-Meteo &middot; <NuxtTime :datetime="new Date()" year="numeric" />
+              Tide data: NOAA CO-OPS &middot; Marine forecasts: Open-Meteo &middot;
+              <NuxtTime :datetime="new Date()" year="numeric" />
             </p>
           </div>
         </div>
