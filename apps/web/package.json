@@ -6,7 +6,7 @@
   "scripts": {
     "build": "nuxt build",
     "dev": "doppler run -- nuxt dev",
-    "db:migrate": "wrangler d1 execute tide-check-db --local --file=drizzle/0000_initial_schema.sql",
+    "db:migrate": "bash ../../tools/db-migrate.sh tide-check-db --local --dir drizzle",
     "db:seed": "wrangler d1 execute tide-check-db --local --file=drizzle/seed.sql",
     "db:studio": "drizzle-kit studio",
     "generate": "nuxt generate",
@@ -15,15 +15,17 @@
     "deploy": "nuxt build && wrangler deploy",
     "prelint": "test -f .nuxt/eslint.config.mjs || nuxt prepare",
     "lint": "eslint . --max-warnings 0",
-    "quality": "echo 'Turbo dependsOn handles lint + typecheck + format:check'"
+    "quality": "echo 'Turbo dependsOn handles lint + typecheck + format:check'",
+    "db:reset": "bash ../../tools/db-migrate.sh tide-check-db --local --dir drizzle --reset && pnpm run db:seed",
+    "db:ready": "pnpm run db:migrate && pnpm run db:seed"
   },
   "dependencies": {
     "@narduk-enterprises/narduk-nuxt-template-layer": "workspace:*",
-    "@narduk/eslint-config": "workspace:*",
     "drizzle-orm": "^0.45.1",
     "nuxt": "^4.3.1",
     "nuxt-auth-utils": "^0.5.29",
-    "zod": "^4.3.6"
+    "zod": "^4.3.6",
+    "@narduk-enterprises/eslint-config": "^1.0.11"
   },
   "devDependencies": {
     "@cloudflare/workers-types": "^4.20240529.0",
